@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CrochetChic — Enquête Préférences</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --rose: #f472b6;
+    --rose-light: #fce7f3;
+    --rose-mid: #fbcfe8;
+    --rose-deep: #ec4899;
+    --rose-dark: #be185d;
+    --white: #ffffff;
+    --cream: #fff9fb;
+    --text: #3b1a2e;
+    --text-soft: #9d6e8a;
+    --shadow: 0 8px 32px rgba(244,114,182,0.15);
+    --shadow-deep: 0 20px 60px rgba(190,24,93,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'DM Sans',sans-serif;
+    background: var(--cream);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* BACKGROUND DECORATIONS */
+  body::before{
+    content:'';
+    position:fixed;top:0;left:0;right:0;bottom:0;
+    background:
+      radial-gradient(ellipse 60% 40% at 10% 10%, rgba(252,207,232,0.5) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 90% 90%, rgba(244,114,182,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(255,255,255,0.8) 0%, transparent 70%);
+    pointer-events:none;z-index:0;
+  }
+
+  /* NAV */
+  nav{
+    position:sticky;top:0;z-index:100;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(244,114,182,0.2);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 32px;height:64px;
+    box-shadow:0 2px 20px rgba(244,114,182,0.08);
+  }
+  .nav-brand{
+    display:flex;align-items:center;gap:10px;
+  }
+  .nav-logo{
+    width:38px;height:38px;
+    background:linear-gradient(135deg,var(--rose),var(--rose-dark));
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;
+    box-shadow:0 4px 12px rgba(244,114,182,0.4);
+  }
+  .nav-name{
+    font-family:'Playfair Display',serif;
+    font-size:1.25rem;font-weight:700;
+    color:var(--text);
+  }
+  .nav-name span{color:var(--rose-deep);}
+  .nav-tabs{display:flex;gap:4px;}
+  .nav-tab{
+    padding:7px 16px;border-radius:20px;
+    font-size:0.82rem;font-weight:500;
+    cursor:pointer;transition:all .2s;
+    border:none;background:transparent;
+    color:var(--text-soft);
+  }
+  .nav-tab:hover{background:var(--rose-light);color:var(--rose-dark);}
+  .nav-tab.active{
+    background:linear-gradient(135deg,var(--rose),var(--rose-deep));
+    color:white;
+    box-shadow:0 4px 12px rgba(244,114,182,0.35);
+  }
+
+  /* PAGES */
+  .page{display:none;position:relative;z-index:1;}
+  .page.active{display:block;}
+
+  /* HERO */
+  .hero{
+    text-align:center;
+    padding:56px 24px 32px;
+  }
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--rose-light);
+    color:var(--rose-dark);
+    padding:6px 16px;border-radius:20px;
+    font-size:0.78rem;font-weight:500;
+    margin-bottom:20px;
+    border:1px solid rgba(244,114,182,0.3);
+  }
+  .hero h1{
+    font-family:'Playfair Display',serif;
+    font-size:2.4rem;font-weight:700;
+    line-height:1.2;
+    background:linear-gradient(135deg,var(--rose-dark),var(--rose),#f9a8d4);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    margin-bottom:12px;
+  }
+  .hero p{
+    color:var(--text-soft);font-size:1rem;
+    max-width:480px;margin:0 auto 8px;line-height:1.6;
+  }
+
+  /* FORM CARD */
+  .form-card{
+    background:white;
+    border-radius:24px;
+    padding:36px;
+    margin:0 auto 40px;
+    max-width:700px;
+    box-shadow:var(--shadow-deep);
+    border:1px solid rgba(244,114,182,0.1);
+  }
+
+  .section-title{
+    font-family:'Playfair Display',serif;
+    font-size:1rem;font-weight:700;
+    color:var(--rose-dark);
+    margin-bottom:18px;
+    padding-bottom:10px;
+    border-bottom:2px solid var(--rose-light);
+    display:flex;align-items:center;gap:8px;
+  }
+
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:24px;}
+  .form-group{display:flex;flex-direction:column;gap:8px;}
+  .form-group.full{grid-column:1/-1;}
+  .form-label{
+    font-size:0.82rem;font-weight:500;
+    color:var(--text-soft);
+    display:flex;align-items:center;gap:6px;
+  }
+  .form-label .icon{font-size:14px;}
+
+  /* RADIO PILLS */
+  .radio-group{display:flex;flex-wrap:wrap;gap:8px;}
+  .radio-pill input{display:none;}
+  .radio-pill label{
+    padding:8px 16px;border-radius:20px;
+    border:1.5px solid var(--rose-mid);
+    background:var(--rose-light);
+    color:var(--text-soft);
+    font-size:0.83rem;font-weight:500;
+    cursor:pointer;transition:all .2s;
+    user-select:none;
+  }
+  .radio-pill input:checked + label{
+    background:linear-gradient(135deg,var(--rose),var(--rose-deep));
+    border-color:var(--rose-deep);
+    color:white;
+    box-shadow:0 4px 12px rgba(244,114,182,0.4);
+  }
+  .radio-pill label:hover{border-color:var(--rose);color:var(--rose-dark);}
+
+  /* SELECT */
+  select{
+    appearance:none;
+    background:var(--rose-light) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ec4899' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center;
+    border:1.5px solid var(--rose-mid);
+    border-radius:12px;
+    padding:10px 36px 10px 14px;
+    font-size:0.87rem;
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    cursor:pointer;transition:all .2s;width:100%;
+  }
+  select:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 3px rgba(244,114,182,0.15);}
+
+  /* TEXTAREA */
+  textarea{
+    border:1.5px solid var(--rose-mid);
+    border-radius:12px;
+    padding:12px 14px;
+    font-family:'DM Sans',sans-serif;
+    font-size:0.87rem;
+    color:var(--text);
+    background:var(--rose-light);
+    resize:vertical;min-height:90px;
+    width:100%;transition:all .2s;
+  }
+  textarea:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 3px rgba(244,114,182,0.15);}
+  textarea::placeholder{color:#d4a5c5;}
+
+  .char-counter{font-size:0.75rem;color:var(--text-soft);text-align:right;}
+
+  /* BUTTONS */
+  .btn-primary{
+    width:100%;padding:14px;
+    border-radius:14px;border:none;
+    background:linear-gradient(135deg,var(--rose),var(--rose-dark));
+    color:white;font-family:'DM Sans',sans-serif;
+    font-size:0.95rem;font-weight:600;
+    cursor:pointer;transition:all .25s;
+    box-shadow:0 6px 20px rgba(244,114,182,0.4);
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(244,114,182,0.5);}
+  .btn-primary:active{transform:translateY(0);}
+  .btn-secondary{
+    padding:10px 20px;border-radius:10px;
+    border:1.5px solid var(--rose-mid);
+    background:white;color:var(--rose-dark);
+    font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;
+    cursor:pointer;transition:all .2s;
+  }
+  .btn-secondary:hover{background:var(--rose-light);}
+
+  /* TOAST */
+  #toast{
+    position:fixed;bottom:28px;right:28px;z-index:999;
+    background:linear-gradient(135deg,var(--rose-dark),var(--rose));
+    color:white;padding:14px 22px;border-radius:14px;
+    font-size:0.88rem;font-weight:500;
+    box-shadow:0 8px 24px rgba(190,24,93,0.3);
+    transform:translateY(80px);opacity:0;
+    transition:all .35s cubic-bezier(.34,1.56,.64,1);
+    display:flex;align-items:center;gap:8px;
+    max-width:320px;
+  }
+  #toast.show{transform:translateY(0);opacity:1;}
+  #toast.error{background:linear-gradient(135deg,#be123c,#e11d48);}
+
+  /* DASHBOARD */
+  .dash-header{
+    padding:40px 24px 20px;
+    text-align:center;
+  }
+  .dash-header h2{
+    font-family:'Playfair Display',serif;
+    font-size:1.9rem;
+    background:linear-gradient(135deg,var(--rose-dark),var(--rose));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    margin-bottom:6px;
+  }
+  .kpi-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:16px;padding:0 24px 28px;max-width:700px;margin:0 auto;
+  }
+  .kpi-card{
+    background:white;border-radius:18px;
+    padding:20px 16px;text-align:center;
+    box-shadow:var(--shadow);
+    border:1px solid rgba(244,114,182,0.1);
+    transition:transform .2s;
+  }
+  .kpi-card:hover{transform:translateY(-4px);}
+  .kpi-num{
+    font-family:'Playfair Display',serif;
+    font-size:2.2rem;font-weight:700;
+    background:linear-gradient(135deg,var(--rose-dark),var(--rose));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .kpi-label{font-size:0.78rem;color:var(--text-soft);margin-top:4px;}
+
+  .charts-grid{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:18px;padding:0 24px 32px;max-width:700px;margin:0 auto;
+  }
+  .chart-card{
+    background:white;border-radius:18px;padding:20px;
+    box-shadow:var(--shadow);border:1px solid rgba(244,114,182,0.1);
+  }
+  .chart-card.full{grid-column:1/-1;}
+  .chart-title{
+    font-size:0.82rem;font-weight:600;
+    color:var(--text-soft);margin-bottom:14px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .bar-item{margin-bottom:10px;}
+  .bar-label{
+    display:flex;justify-content:space-between;
+    font-size:0.78rem;color:var(--text);margin-bottom:4px;
+  }
+  .bar-track{
+    height:8px;background:var(--rose-light);border-radius:6px;overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--rose),var(--rose-deep));
+    border-radius:6px;transition:width .8s cubic-bezier(.34,1.2,.64,1);
+  }
+
+  .dash-actions{
+    display:flex;justify-content:center;gap:12px;
+    padding-bottom:40px;
+  }
+
+  /* RESPONSIVE */
+  @media(max-width:600px){
+    .form-grid{grid-template-columns:1fr;}
+    .charts-grid{grid-template-columns:1fr;}
+    .nav-tabs .nav-tab span{display:none;}
+    nav{padding:0 16px;}
+    .form-card{padding:24px 18px;margin:0 12px 30px;}
+    .hero h1{font-size:1.8rem;}
+    .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  }
+
+  /* CROCHET DECO */
+  .crochet-deco{
+    text-align:center;
+    font-size:1.8rem;
+    opacity:0.25;
+    letter-spacing:8px;
+    margin:8px 0;
+    user-select:none;
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap{margin-bottom:24px;}
+  .progress-label{
+    display:flex;justify-content:space-between;
+    font-size:0.78rem;color:var(--text-soft);margin-bottom:6px;
+  }
+  .progress-track{
+    height:5px;background:var(--rose-light);border-radius:4px;overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--rose),var(--rose-deep));
+    border-radius:4px;transition:width .4s;
+  }
+
+  /* SUGGESTIONS */
+  .suggestion-list{max-height:220px;overflow-y:auto;padding-right:4px;}
+  .suggestion-item{
+    background:var(--rose-light);border-radius:10px;
+    padding:10px 14px;margin-bottom:8px;
+    font-size:0.82rem;color:var(--text);
+    border-left:3px solid var(--rose);
+    font-style:italic;line-height:1.5;
+  }
+  .empty-state{
+    text-align:center;padding:32px;color:var(--text-soft);
+    font-size:0.9rem;
+  }
+  .empty-state .icon{font-size:2.5rem;margin-bottom:10px;}
+
+  /* CONFIRMATION OVERLAY */
+  .confirm-overlay{
+    display:none;
+    position:fixed;inset:0;z-index:200;
+    background:rgba(190,24,93,0.08);
+    backdrop-filter:blur(6px);
+    align-items:center;justify-content:center;
+  }
+  .confirm-overlay.show{display:flex;}
+  .confirm-box{
+    background:white;
+    border-radius:24px;
+    padding:48px 40px;
+    text-align:center;
+    max-width:380px;width:90%;
+    box-shadow:0 24px 64px rgba(190,24,93,0.2);
+    border:1px solid rgba(244,114,182,0.2);
+    animation:popIn .35s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes popIn{
+    from{transform:scale(0.85);opacity:0;}
+    to{transform:scale(1);opacity:1;}
+  }
+  .confirm-icon{
+    width:64px;height:64px;border-radius:50%;
+    background:linear-gradient(135deg,var(--rose-light),var(--rose-mid));
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 20px;
+    font-size:28px;
+  }
+  .confirm-title{
+    font-family:'Playfair Display',serif;
+    font-size:1.4rem;font-weight:700;
+    color:var(--text);margin-bottom:10px;
+  }
+  .confirm-msg{
+    color:var(--text-soft);font-size:0.9rem;
+    line-height:1.6;margin-bottom:28px;
+  }
+  .confirm-btn{
+    padding:12px 32px;border-radius:12px;border:none;
+    background:linear-gradient(135deg,var(--rose),var(--rose-dark));
+    color:white;font-family:'DM Sans',sans-serif;
+    font-size:0.9rem;font-weight:600;
+    cursor:pointer;transition:all .2s;
+    box-shadow:0 4px 16px rgba(244,114,182,0.35);
+  }
+  .confirm-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(244,114,182,0.45);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">✦</div>
+    <div class="nav-name">Crochet<span>Chic</span></div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('collecte')"><span>Enquête</span></button>
+    <button class="nav-tab" onclick="showPage('dashboard')"><span>Tableau de bord</span></button>
+    <button class="nav-tab" onclick="exportCSV()"><span>Exporter</span></button>
+  </div>
+</nav>
+
+<!-- PAGE COLLECTE -->
+<div id="page-collecte" class="page active">
+  <div class="hero">
+    <div class="hero-badge">Mode &amp; Accessoires Crochetés</div>
+    <h1>Partagez vos préférences !</h1>
+    <p>Aidez-nous à créer des pièces qui vous ressemblent — bonnets, sacs, tops &amp; robes faits main.</p>
+    <div class="crochet-deco">✿ ❀ ✿ ❀ ✿</div>
+  </div>
+
+  <div class="form-card">
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Progression</span><span id="prog-text">0 / 9 champs</span></div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Profil -->
+    <div class="section-title">Votre profil</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <div class="form-label">Sexe *</div>
+        <div class="radio-group" id="sexe">
+          <div class="radio-pill"><input type="radio" name="sexe" id="s-f" value="Femme"><label for="s-f">Femme</label></div>
+          <div class="radio-pill"><input type="radio" name="sexe" id="s-m" value="Homme"><label for="s-m">Homme</label></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Tranche d'âge *</div>
+        <select id="age" onchange="updateProgress()">
+          <option value="">— Choisissez —</option>
+          <option value="<18">Moins de 18 ans</option>
+          <option value="18-25">18 – 25 ans</option>
+          <option value="26-35">26 – 35 ans</option>
+          <option value="35+">35 ans et plus</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Produits -->
+    <div class="section-title">Vos goûts</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <div class="form-label">Produit préféré *</div>
+        <div class="radio-group" id="produit">
+          <div class="radio-pill"><input type="radio" name="produit" id="p-bo" value="Bonnet"><label for="p-bo">Bonnet</label></div>
+          <div class="radio-pill"><input type="radio" name="produit" id="p-sa" value="Sac"><label for="p-sa">Sac</label></div>
+          <div class="radio-pill"><input type="radio" name="produit" id="p-to" value="Top"><label for="p-to">Top</label></div>
+          <div class="radio-pill"><input type="radio" name="produit" id="p-ro" value="Robe"><label for="p-ro">Robe</label></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Couleur préférée *</div>
+        <div class="radio-group" id="couleur">
+          <div class="radio-pill"><input type="radio" name="couleur" id="c-no" value="Noir"><label for="c-no">Noir</label></div>
+          <div class="radio-pill"><input type="radio" name="couleur" id="c-bl" value="Blanc"><label for="c-bl">Blanc</label></div>
+          <div class="radio-pill"><input type="radio" name="couleur" id="c-ro" value="Rouge"><label for="c-ro">Rouge</label></div>
+          <div class="radio-pill"><input type="radio" name="couleur" id="c-mu" value="Multicolore"><label for="c-mu">Multicolore</label></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Style préféré *</div>
+        <div class="radio-group" id="style">
+          <div class="radio-pill"><input type="radio" name="style" id="st-si" value="Simple"><label for="st-si">Simple</label></div>
+          <div class="radio-pill"><input type="radio" name="style" id="st-mo" value="Moderne"><label for="st-mo">Moderne</label></div>
+          <div class="radio-pill"><input type="radio" name="style" id="st-tr" value="Traditionnel"><label for="st-tr">Traditionnel</label></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Plateforme d'achat *</div>
+        <div class="radio-group" id="plateforme">
+          <div class="radio-pill"><input type="radio" name="plateforme" id="pl-wa" value="WhatsApp"><label for="pl-wa">WhatsApp</label></div>
+          <div class="radio-pill"><input type="radio" name="plateforme" id="pl-in" value="Instagram"><label for="pl-in">Instagram</label></div>
+          <div class="radio-pill"><input type="radio" name="plateforme" id="pl-bo" value="Boutique"><label for="pl-bo">Boutique</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comportement -->
+    <div class="section-title">Comportement d'achat</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <div class="form-label">Fréquence d'achat *</div>
+        <div class="radio-group" id="frequence">
+          <div class="radio-pill"><input type="radio" name="frequence" id="f-so" value="Souvent"><label for="f-so">Souvent</label></div>
+          <div class="radio-pill"><input type="radio" name="frequence" id="f-pa" value="Parfois"><label for="f-pa">Parfois</label></div>
+          <div class="radio-pill"><input type="radio" name="frequence" id="f-ra" value="Rarement"><label for="f-ra">Rarement</label></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Budget *</div>
+        <select id="budget" onchange="updateProgress()">
+          <option value="">— Choisissez —</option>
+          <option value="<5000">Moins de 5 000 FCFA</option>
+          <option value="5000-10000">5 000 – 10 000 FCFA</option>
+          <option value="10000+">Plus de 10 000 FCFA</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <div class="form-label">Niveau d'intérêt *</div>
+        <div class="radio-group" id="interet">
+          <div class="radio-pill"><input type="radio" name="interet" id="i-be" value="Beaucoup"><label for="i-be">Beaucoup</label></div>
+          <div class="radio-pill"><input type="radio" name="interet" id="i-mo" value="Moyen"><label for="i-mo">Moyen</label></div>
+          <div class="radio-pill"><input type="radio" name="interet" id="i-pe" value="Peu"><label for="i-pe">Peu</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suggestion -->
+    <div class="section-title">Votre avis</div>
+    <div class="form-group">
+      <div class="form-label">Suggestion / Commentaire</div>
+      <textarea id="suggestion" maxlength="500" placeholder="Partagez vos idées, suggestions ou remarques... (optionnel)" oninput="updateCharCount(this)"></textarea>
+      <div class="char-counter"><span id="char-count">0</span> / 500</div>
+    </div>
+
+    <div style="margin-top:28px;display:flex;flex-direction:column;gap:10px;">
+      <button class="btn-primary" onclick="submitForm()">
+        Envoyer mon enquête
+      </button>
+      <button class="btn-secondary" onclick="resetForm()">Réinitialiser</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE DASHBOARD -->
+<div id="page-dashboard" class="page">
+  <div class="dash-header">
+    <h2>📊 Tableau de bord</h2>
+    <p style="color:var(--text-soft);font-size:0.9rem;">Analyse descriptive des réponses collectées</p>
+  </div>
+
+  <div class="kpi-grid" id="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-num" id="kpi-total">—</div>
+      <div class="kpi-label">Réponses totales</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num" id="kpi-produit">—</div>
+      <div class="kpi-label">Produit favori</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num" id="kpi-plateforme">—</div>
+      <div class="kpi-label">Plateforme top</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num" id="kpi-budget">—</div>
+      <div class="kpi-label">Budget majoritaire</div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">Répartition par sexe</div>
+      <div id="chart-sexe"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Tranches d'âge</div>
+      <div id="chart-age"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Produits préférés</div>
+      <div id="chart-produit"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Plateformes d'achat</div>
+      <div id="chart-plateforme"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Budget des clients</div>
+      <div id="chart-budget"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Niveau d'intérêt</div>
+      <div id="chart-interet"></div>
+    </div>
+    <div class="chart-card full">
+      <div class="chart-title">Suggestions des clients</div>
+      <div class="suggestion-list" id="chart-suggestions">
+        <div class="empty-state">Aucune suggestion pour l'instant</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-actions">
+    <button class="btn-primary" style="width:auto;padding:12px 28px;" onclick="loadDashboard()">Actualiser</button>
+    <button class="btn-secondary" onclick="exportCSV()">Exporter CSV</button>
+  </div>
+</div>
+
+<div id="toast">Message</div>
+
+<!-- CONFIRMATION OVERLAY -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">✓</div>
+    <div class="confirm-title">Merci pour votre participation !</div>
+    <div class="confirm-msg">Votre réponse a bien été enregistrée. Elle nous aidera à mieux vous servir.</div>
+    <button class="confirm-btn" onclick="closeConfirm()">Fermer</button>
+  </div>
+</div>
+
+<script>
+const radioFields = ['sexe','produit','couleur','style','plateforme','frequence','interet'];
+const selectFields = ['age','budget'];
+const total = 9;
+
+document.querySelectorAll('input[type=radio]').forEach(r=>{
+  r.addEventListener('change', updateProgress);
+});
+
+function updateProgress(){
+  let filled=0;
+  radioFields.forEach(f=>{
+    if(document.querySelector(`input[name="${f}"]:checked`)) filled++;
+  });
+  selectFields.forEach(f=>{
+    if(document.getElementById(f)?.value) filled++;
+  });
+  const pct = Math.round(filled/total*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-text').textContent = `${filled} / ${total} champs`;
+}
+
+function updateCharCount(el){
+  document.getElementById('char-count').textContent = el.value.length;
+}
+
+function getVal(name){
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : '';
+}
+
+async function submitForm(){
+  const data = {
+    sexe: getVal('sexe'),
+    age: document.getElementById('age').value,
+    produit: getVal('produit'),
+    frequence: getVal('frequence'),
+    budget: document.getElementById('budget').value,
+    couleur: getVal('couleur'),
+    style: getVal('style'),
+    plateforme: getVal('plateforme'),
+    interet: getVal('interet'),
+    suggestion: document.getElementById('suggestion').value
+  };
+
+  const missing = ['sexe','age','produit','frequence','budget','couleur','style','plateforme','interet']
+    .filter(k=>!data[k]);
+  if(missing.length>0){
+    showToast('Veuillez remplir tous les champs obligatoires.','error');
+    return;
+  }
+
+  try{
+    const res = await fetch('/api/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data)
+    });
+    const json = await res.json();
+    if(json.success){
+      showConfirm();
+      resetForm();
+    } else {
+      showToast('Erreur : '+json.error,'error');
+    }
+  } catch(e){
+    showToast('Erreur de connexion. Veuillez réessayer.','error');
+  }
+}
+
+function showConfirm(){
+  const overlay = document.getElementById('confirm-overlay');
+  overlay.classList.add('show');
+}
+
+function closeConfirm(){
+  document.getElementById('confirm-overlay').classList.remove('show');
+}
+
+function resetForm(){
+  document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);
+  document.getElementById('age').value='';
+  document.getElementById('budget').value='';
+  document.getElementById('suggestion').value='';
+  document.getElementById('char-count').textContent='0';
+  updateProgress();
+}
+
+function showToast(msg, type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='show'+(type==='error'?' error':'');
+  setTimeout(()=>t.className='',3500);
+}
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  event.target.classList.add('active');
+  if(p==='dashboard') loadDashboard();
+}
+
+function getTop(obj){
+  if(!obj||!Object.keys(obj).length) return '—';
+  return Object.entries(obj).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+async function loadDashboard(){
+  try{
+    const res = await fetch('/api/stats');
+    const d = await res.json();
+
+    document.getElementById('kpi-total').textContent = d.total||0;
+    document.getElementById('kpi-produit').textContent = getTop(d.stats?.produit)||'—';
+    document.getElementById('kpi-plateforme').textContent = getTop(d.stats?.plateforme)||'—';
+    document.getElementById('kpi-budget').textContent = getTop(d.stats?.budget)||'—';
+
+    const fields = [
+      {id:'chart-sexe',key:'sexe'},
+      {id:'chart-age',key:'age'},
+      {id:'chart-produit',key:'produit'},
+      {id:'chart-plateforme',key:'plateforme'},
+      {id:'chart-budget',key:'budget'},
+      {id:'chart-interet',key:'interet'},
+    ];
+    fields.forEach(({id,key})=>{
+      renderBar(id, d.stats?.[key]||{}, d.total);
+    });
+
+    const sug = d.suggestions||[];
+    const el = document.getElementById('chart-suggestions');
+    if(!sug.length){
+      el.innerHTML='<div class="empty-state">Aucune suggestion pour l\'instant</div>';
+    } else {
+      el.innerHTML = sug.map(s=>`<div class="suggestion-item">"${escHtml(s)}"</div>`).join('');
+    }
+  } catch(e){
+    showToast('Impossible de charger les données.','error');
+  }
+}
+
+function escHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderBar(containerId, data, total){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  const entries = Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length){
+    el.innerHTML='<div style="font-size:0.8rem;color:#c4a0b6;text-align:center;padding:16px;">Aucune donnée</div>';
+    return;
+  }
+  el.innerHTML = entries.map(([k,v])=>{
+    const pct = total ? Math.round(v/total*100) : 0;
+    return `<div class="bar-item">
+      <div class="bar-label"><span>${escHtml(k)}</span><span>${v} (${pct}%)</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function exportCSV(){
+  window.location.href='/api/export';
+}
+</script>
+</body>
+</html>
