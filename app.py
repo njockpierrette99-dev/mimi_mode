@@ -97,6 +97,15 @@ def stats():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@app.route("/api/all", methods=["GET"])
+def all_data():
+    try:
+        result = supabase.table(TABLE).select("*").order("created_at").execute()
+        return jsonify({"data": result.data or []})
+    except Exception as e:
+        return jsonify({"data": [], "error": str(e)}), 500
+
+
 @app.route("/api/export", methods=["GET"])
 def export_csv():
     try:
